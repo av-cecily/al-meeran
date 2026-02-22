@@ -1,0 +1,94 @@
+/* AI Fabric Visualizer Styles */
+
+.visualizer-pane {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 1024px) {
+    .visualizer-pane {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Upload Zone */
+#upload-zone {
+    position: relative;
+    border: 2px dashed #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: #fdfdfd;
+    overflow: hidden;
+}
+
+#upload-zone.drag-over {
+    border-color: #C5A059;
+    background: rgba(197, 160, 89, 0.05);
+}
+
+#visualizer-canvas {
+    max-width: 100%;
+    max-height: 500px;
+    display: none;
+}
+
+/* Fabric Selector */
+.fabric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.fabric-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-size: cover;
+    background-position: center;
+}
+
+.fabric-circle:hover {
+    transform: scale(1.1);
+}
+
+.fabric-circle.selected {
+    border-color: #C5A059;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #C5A059;
+}
+
+/* Shimmer Effect */
+.shimmer-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    display: none;
+    z-index: 20;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.processing #visualizer-canvas {
+    filter: blur(4px);
+}

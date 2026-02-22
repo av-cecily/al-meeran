@@ -1,0 +1,22 @@
+:root {
+    --rich-navy: #1A2238;
+    --gold: #C5A059;
+    --soft-white: #F8F9FA;
+}
+
+body {
+    background-color: var(--soft-white);
+    color: var(--rich-navy);
+}
+
+.text-gold {
+    color: var(--gold);
+}
+
+.bg-navy {
+    background-color: var(--rich-navy);
+}
+
+.bg-gold {
+    background-color: var(--gold);
+}

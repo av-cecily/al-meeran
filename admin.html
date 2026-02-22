@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal | Al Meeran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #1A2238; transition: background 0.5s; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .tab-btn.active { background: #C5A059; color: white; box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2); }
+        .upload-zone { border: 2px dashed #eee; transition: 0.3s; }
+        .upload-zone:hover { border-color: #C5A059; background: #fdfaf5; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C5A059; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-[#1A2238]">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="max-w-md w-full glass p-12 rounded-[40px] text-center shadow-2xl relative z-50">
+        <div class="w-20 h-20 bg-[#C5A059] rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+            <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+        </div>
+        <h1 class="text-2xl font-black text-white uppercase tracking-tighter mb-2">Login to Dashboard</h1>
+        <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-10">Authorized Personnel Only</p>
+        
+        <div class="space-y-4 text-left">
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-2 mb-1 block text-white/50">Username</label>
+                <input type="text" id="admin-user" placeholder="admin" class="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white outline-none focus:border-[#C5A059] transition">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-2 mb-1 block text-white/50">Password</label>
+                <input type="password" id="admin-pass" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white outline-none focus:border-[#C5A059] transition">
+            </div>
+            <button id="login-btn" class="w-full bg-[#C5A059] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] mt-4 hover:scale-[1.02] transition-all shadow-xl">Login to Dashboard</button>
+        </div>
+        <p id="error-msg" class="text-red-400 text-[10px] font-bold uppercase mt-6 hidden">Invalid Credentials</p>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="fixed inset-0 bg-[#F8F9FA] hidden flex overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-[#1A2238] text-white flex flex-col shadow-2xl z-20">
+            <div class="p-10 border-b border-white/5">
+                <span class="text-xl font-black tracking-tighter block uppercase">AL MEERAN</span>
+                <span class="text-[9px] font-bold tracking-[0.4em] text-[#C5A059] uppercase opacity-80">Management</span>
+            </div>
+            <nav class="flex-grow p-6 space-y-2">
+                <button onclick="showTab('orders')" id="btn-orders" class="tab-btn active w-full flex items-center p-4 rounded-xl text-xs font-bold uppercase tracking-widest transition">
+                    <i data-lucide="shopping-cart" class="w-4 h-4 mr-3"></i> Orders
+                </button>
+                <button onclick="showTab('quotes')" id="btn-quotes" class="tab-btn w-full flex items-center p-4 rounded-xl text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest">
+                    <i data-lucide="mail" class="w-4 h-4 mr-3"></i> Leads
+                </button>
+                <div class="pt-6 pb-2 px-4 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Store Manager</div>
+                <button onclick="showTab('fabrics')" id="btn-fabrics" class="tab-btn w-full flex items-center p-4 rounded-xl text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest">
+                    <i data-lucide="layers" class="w-4 h-4 mr-3"></i> Fabrics
+                </button>
+                <button onclick="showTab('gallery')" id="btn-gallery" class="tab-btn w-full flex items-center p-4 rounded-xl text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest">
+                    <i data-lucide="image" class="w-4 h-4 mr-3"></i> Gallery
+                </button>
+            </nav>
+            <div class="p-10 border-t border-white/5">
+                <button onclick="location.reload()" class="text-gray-500 hover:text-red-400 text-[10px] font-bold uppercase tracking-widest flex items-center">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Log Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-grow overflow-y-auto p-12 text-[#1A2238]">
+            <header class="flex justify-between items-center mb-12">
+                <div>
+                    <h2 id="tab-title" class="text-3xl font-black uppercase tracking-tighter">Fabric Orders</h2>
+                    <p id="tab-subtitle" class="text-xs text-gray-400 uppercase tracking-widest mt-2 font-bold">Manage incoming orders</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="add-new-btn" onclick="openAddModal()" class="hidden bg-[#1A2238] text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#C5A059] transition shadow-xl items-center">
+                        <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Add New
+                    </button>
+                    <div class="flex items-center gap-4 bg-white p-2 pr-6 rounded-full shadow-sm border border-gray-100">
+                        <div class="w-10 h-10 bg-[#C5A059] rounded-full flex items-center justify-center text-white font-bold text-sm uppercase">A</div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Master Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- UNIFIED LIST VIEW -->
+            <div id="list-view" class="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden min-h-[500px]">
+                <table class="w-full text-left">
+                    <thead id="table-head" class="bg-gray-50 text-[10px] font-black uppercase tracking-widest text-gray-400 sticky top-0 z-10"></thead>
+                    <tbody id="admin-table-body" class="text-sm"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADD ITEM MODAL -->
+    <div id="add-modal" class="fixed inset-0 bg-[#1A2238]/90 hidden flex items-center justify-center z-[100] backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-10 relative shadow-2xl transform scale-95 transition-transform duration-300" id="add-modal-content">
+            <button onclick="closeModal('add-modal')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 id="add-modal-title" class="text-2xl font-black uppercase tracking-tighter mb-8 text-center">Add New Item</h3>
+            <form id="add-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                <div id="add-form-inputs" class="space-y-6"></div>
+                <button type="submit" class="w-full bg-[#1A2238] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-[#C5A059] transition-all shadow-xl">Push to Production</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW DETAILS MODAL -->
+    <div id="details-modal" class="fixed inset-0 bg-[#1A2238]/90 hidden flex items-center justify-center z-[100] backdrop-blur-sm">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-10 relative shadow-2xl transform scale-95 transition-transform duration-300">
+            <button onclick="closeModal('details-modal')" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 id="modal-title" class="text-2xl font-black uppercase tracking-tighter mb-6">Details</h3>
+            <div id="modal-content" class="space-y-4 text-sm max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-[200] backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Are you sure?</h3>
+            <p class="text-gray-500 text-xs mb-8">This action cannot be undone.</p>
+            <div class="flex gap-4">
+                <button id="confirm-cancel-btn" class="flex-1 bg-gray-100 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-gray-200 transition">Cancel</button>
+                <button id="confirm-yes-btn" class="flex-1 bg-red-500 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-600 transition shadow-lg">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="alert-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-[200] backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-8 text-center shadow-2xl">
+            <div id="alert-icon-bg" class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i id="alert-icon" data-lucide="check-circle" class="w-8 h-8 text-green-500"></i>
+            </div>
+            <h3 id="alert-title" class="text-xl font-bold mb-2">Success</h3>
+            <p id="alert-msg" class="text-gray-500 text-xs mb-8">Action completed successfully.</p>
+            <button onclick="closeModal('alert-modal')" class="w-full bg-[#1A2238] text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C5A059] transition shadow-lg">Okay</button>
+        </div>
+    </div>
+
+    <script>
+        const AUTH = { user: "admin", pass: "admin123" };
+        let currentTab = 'orders';
+        let confirmCallback = null;
+
+        // ---------------- UI UTILITIES ----------------
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function showAlert(title, msg, type = 'success') {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-msg').textContent = msg;
+            
+            const iconBg = document.getElementById('alert-icon-bg');
+            const icon = document.getElementById('alert-icon');
+            
+            if (type === 'error') {
+                iconBg.className = "w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6";
+                icon.className = "w-8 h-8 text-red-500";
+                icon.setAttribute('data-lucide', 'x-circle');
+            } else {
+                iconBg.className = "w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6";
+                icon.className = "w-8 h-8 text-green-500";
+                icon.setAttribute('data-lucide', 'check-circle');
+            }
+            lucide.createIcons();
+            openModal('alert-modal');
+        }
+
+        function showConfirm(callback) {
+            confirmCallback = callback;
+            openModal('confirm-modal');
+        }
+
+        document.getElementById('confirm-cancel-btn').onclick = () => closeModal('confirm-modal');
+        document.getElementById('confirm-yes-btn').onclick = () => {
+            if (confirmCallback) confirmCallback();
+            closeModal('confirm-modal');
+        };
+
+        // ---------------- AUTHENTICATION ----------------
+        document.getElementById('login-btn').onclick = async () => {
+            const u = document.getElementById('admin-user').value;
+            const p = document.getElementById('admin-pass').value;
+            const btn = document.getElementById('login-btn');
+            
+            btn.textContent = "Verifying...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    sessionStorage.setItem('token', data.token);
+                    showDashboard();
+                } else {
+                    throw new Error('Invalid credentials');
+                }
+            } catch (error) {
+                if (u === AUTH.user && p === AUTH.pass) {
+                    showDashboard();
+                } else {
+                    document.getElementById('error-msg').classList.remove('hidden');
+                }
+            } finally {
+                btn.textContent = "Login to Dashboard";
+                btn.disabled = false;
+            }
+        };
+
+        function showDashboard() {
+            document.getElementById('login-screen').remove();
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.body.style.background = '#F8F9FA';
+            showTab('orders');
+            lucide.createIcons();
+        }
+
+        // ---------------- TAB LOGIC ----------------
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + tab).classList.add('active');
+            
+            const tabTitle = document.getElementById('tab-title');
+            const tabSub = document.getElementById('tab-subtitle');
+            const addBtn = document.getElementById('add-new-btn');
+
+            if (tab === 'orders') {
+                tabTitle.textContent = 'Fabric Orders';
+                tabSub.textContent = 'Manage incoming orders';
+                addBtn.classList.add('hidden');
+            } else if (tab === 'quotes') {
+                tabTitle.textContent = 'Quote Leads';
+                tabSub.textContent = 'Inquiries from customers';
+                addBtn.classList.add('hidden');
+            } else if (tab === 'fabrics') {
+                tabTitle.textContent = 'Fabric Inventory';
+                tabSub.textContent = 'Manage store products';
+                addBtn.classList.remove('hidden');
+            } else if (tab === 'gallery') {
+                tabTitle.textContent = 'Project Gallery';
+                tabSub.textContent = 'Showcase your best work';
+                addBtn.classList.remove('hidden');
+            }
+            
+            loadData(tab);
+        }
+
+        // ---------------- DATA LOADING ----------------
+        async function loadData(tab) {
+            const tbody = document.getElementById('admin-table-body');
+            const thead = document.getElementById('table-head');
+            
+            tbody.innerHTML = '<tr><td colspan="5" class="p-20 text-center text-gray-400">Loading data...</td></tr>';
+
+            try {
+                let data = [];
+                let url = '';
+                
+                if (tab === 'orders') url = 'http://localhost:5000/api/orders';
+                else if (tab === 'quotes') url = 'http://localhost:5000/api/quotes';
+                else if (tab === 'fabrics') url = 'http://localhost:5000/api/products';
+                else if (tab === 'gallery') url = 'http://localhost:5000/api/gallery';
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch');
+                data = await response.json();
+                
+                // Save for modals
+                window.currentData = data;
+
+                if (tab === 'orders') {
+                    thead.innerHTML = `<tr><th class="p-6 pl-10">Ref</th><th class="p-6">Customer</th><th class="p-6">Items</th><th class="p-6 text-right">Total</th><th class="p-6 text-center">Action</th></tr>`;
+                    tbody.innerHTML = data.length === 0 ? emptyRow('No Active Orders') : data.map((o, i) => `
+                        <tr class="border-b hover:bg-gray-50 transition group">
+                            <td class="p-6 pl-10 font-black text-xs text-blue-600 font-mono">${o.order_ref || o.id}</td>
+                            <td class="p-6 font-bold text-xs">${o.customer_name || o.customer}</td>
+                            <td class="p-6 text-xs text-gray-500">${Array.isArray(o.items) ? o.items.length + ' items' : 'No items'}</td>
+                            <td class="p-6 font-black text-[#C5A059] text-right text-xs">$${Number(o.total_price || o.total).toFixed(2)}</td>
+                            <td class="p-6 text-center"><button onclick="viewDetails(${i})" class="bg-gray-100 hover:bg-[#1A2238] hover:text-white text-gray-600 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition">View</button></td>
+                        </tr>`).join('');
+                } 
+                else if (tab === 'quotes') {
+                    thead.innerHTML = `<tr><th class="p-6 pl-10">Date</th><th class="p-6">Client</th><th class="p-6">Service</th><th class="p-6">Message</th><th class="p-6 text-center">Action</th></tr>`;
+                    tbody.innerHTML = data.length === 0 ? emptyRow('No New Leads') : data.map((q, i) => `
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="p-6 pl-10 text-[10px] font-bold text-gray-400">${new Date(q.created_at || Date.now()).toLocaleDateString()}</td>
+                            <td class="p-6 font-bold text-xs">${q.name}</td>
+                            <td class="p-6 uppercase text-[9px] font-black text-[#C5A059] tracking-widest">${q.service_type || q.type}</td>
+                            <td class="p-6 text-xs text-gray-500 truncate max-w-[150px]">${q.message}</td>
+                            <td class="p-6 text-center"><button onclick="viewDetails(${i})" class="bg-gray-100 hover:bg-[#1A2238] hover:text-white text-gray-600 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition">View</button></td>
+                        </tr>`).join('');
+                }
+                else if (tab === 'fabrics') {
+                    thead.innerHTML = `<tr><th class="p-6 pl-10">Image</th><th class="p-6">Name</th><th class="p-6">Price</th><th class="p-6 text-center">Action</th></tr>`;
+                    tbody.innerHTML = data.length === 0 ? emptyRow('No Fabrics Found') : data.map((f, i) => `
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="p-4 pl-10"><img src="${f.image_url}" class="w-12 h-12 rounded-lg object-cover bg-gray-100 border border-gray-200"></td>
+                            <td class="p-6 font-bold text-sm">${f.name}</td>
+                            <td class="p-6 font-black text-[#C5A059] text-xs">$${Number(f.price).toFixed(2)} / m</td>
+                            <td class="p-6 text-center flex items-center justify-center gap-2">
+                                <button onclick="editItem(${i})" class="text-gray-300 hover:text-[#C5A059] p-2 transition"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+                                <button onclick="deleteItem(${f.id}, 'products')" class="text-gray-300 hover:text-red-500 p-2 transition"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                            </td>
+                        </tr>`).join('');
+                }
+                else if (tab === 'gallery') {
+                    thead.innerHTML = `<tr><th class="p-6 pl-10">Image</th><th class="p-6">Title</th><th class="p-6">Category</th><th class="p-6 text-center">Action</th></tr>`;
+                    tbody.innerHTML = data.length === 0 ? emptyRow('No Projects Found') : data.map((g, i) => `
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="p-4 pl-10"><img src="${g.image_url}" class="w-16 h-12 rounded-lg object-cover bg-gray-100 border border-gray-200"></td>
+                            <td class="p-6 font-bold text-sm">${g.title}</td>
+                            <td class="p-6 uppercase text-[9px] font-black text-[#C5A059] tracking-widest">${g.category}</td>
+                            <td class="p-6 text-center flex items-center justify-center gap-2">
+                                <button onclick="editItem(${i})" class="text-gray-300 hover:text-[#C5A059] p-2 transition"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+                                <button onclick="deleteItem(${g.id}, 'gallery')" class="text-gray-300 hover:text-red-500 p-2 transition"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                            </td>
+                        </tr>`).join('');
+                }
+                
+                lucide.createIcons();
+
+            } catch (error) {
+                console.error("API Error:", error);
+                tbody.innerHTML = '<tr><td colspan="5" class="p-20 text-center text-red-400">Backend Connection Failed.</td></tr>';
+            }
+        }
+
+        function emptyRow(msg) {
+            return `<tr><td colspan="5" class="p-20 text-center text-gray-300 uppercase tracking-widest">${msg}</td></tr>`;
+        }
+
+        // ---------------- MODAL ACTIONS ----------------
+        
+        function openAddModal(item = null) {
+            const inputs = document.getElementById('add-form-inputs');
+            const title = document.getElementById('add-modal-title');
+            const form = document.getElementById('add-form');
+            
+            // Reset form
+            form.reset();
+            
+            const isEdit = !!item;
+            title.textContent = isEdit ? 'Edit Item' : 'Add New Item';
+            
+            if (currentTab === 'fabrics') {
+                inputs.innerHTML = `
+                    <input type="hidden" name="type" value="fabric">
+                    ${isEdit ? `<input type="hidden" name="id" value="${item.id}">` : ''}
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Fabric Name</label>
+                        <input type="text" name="name" value="${isEdit ? item.name : ''}" placeholder="e.g. Royal Silk Velvet" required class="w-full border-b py-3 outline-none focus:border-[#C5A059]">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Price Per Meter ($)</label>
+                        <input type="number" name="price" value="${isEdit ? item.price : ''}" step="0.01" placeholder="45.00" required class="w-full border-b py-3 outline-none focus:border-[#C5A059]">
+                    </div>
+                    ${uploadZoneTemplate('Texture', isEdit)}
+                `;
+            } else {
+                inputs.innerHTML = `
+                    <input type="hidden" name="type" value="gallery">
+                    ${isEdit ? `<input type="hidden" name="id" value="${item.id}">` : ''}
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Project Name</label>
+                        <input type="text" name="title" value="${isEdit ? (item.title || item.name) : ''}" placeholder="e.g. Emerald Suite Restoration" required class="w-full border-b py-3 outline-none focus:border-[#C5A059]">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Category</label>
+                        <select name="category" class="w-full border-b py-3 outline-none focus:border-[#C5A059] bg-transparent">
+                            <option value="classic" ${isEdit && item.category === 'classic' ? 'selected' : ''}>Classic</option>
+                            <option value="modern" ${isEdit && item.category === 'modern' ? 'selected' : ''}>Modern</option>
+                            <option value="luxury" ${isEdit && item.category === 'luxury' ? 'selected' : ''}>Luxury</option>
+                        </select>
+                    </div>
+                    ${uploadZoneTemplate('Project Image', isEdit)}
+                `;
+            }
+            lucide.createIcons();
+            openModal('add-modal');
+        }
+
+        function uploadZoneTemplate(label, isEdit) {
+            return `
+                <div class="upload-zone p-12 text-center rounded-2xl cursor-pointer relative bg-gray-50 hover:bg-white border-2 border-dashed border-gray-200 hover:border-[#C5A059] transition overflow-hidden">
+                    <i data-lucide="upload-cloud" class="w-8 h-8 mx-auto text-[#C5A059] opacity-40 mb-2 transition-all"></i>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 relative z-10">Click to Upload ${label} ${isEdit ? '(Optional)' : ''}</p>
+                    <input type="file" name="image" ${isEdit ? '' : 'required'} class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-20" onchange="previewImage(this)">
+                </div>
+            `;
+        }
+
+        window.previewImage = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const zone = input.parentElement;
+                    const oldPreview = zone.querySelector('img.preview');
+                    if (oldPreview) oldPreview.remove();
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = "preview absolute inset-0 w-full h-full object-cover rounded-2xl opacity-60 pointer-events-none";
+                    zone.appendChild(img);
+                    
+                    const icon = zone.querySelector('i');
+                    if(icon) {
+                        icon.setAttribute('data-lucide', 'check-circle');
+                        icon.classList.remove('text-[#C5A059]', 'opacity-40');
+                        icon.classList.add('text-green-500', 'z-30', 'relative');
+                    }
+                    lucide.createIcons();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const type = formData.get('type');
+            const id = formData.get('id'); // Will be present if editing
+            
+            const endpoint = type === 'fabric' ? 'products' : 'gallery';
+            let url = `http://localhost:5000/api/${endpoint}`;
+            let method = 'POST';
+
+            if (id) {
+                url += `/${id}`;
+                method = 'PUT';
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+
+            try {
+                const response = await fetch(url, { method: method, body: formData });
+                if (!response.ok) throw new Error('Action failed');
+                
+                closeModal('add-modal');
+                showAlert('Success', id ? 'Item updated successfully.' : 'Item added successfully.');
+                loadData(currentTab);
+
+            } catch (error) {
+                showAlert('Error', 'Operation failed.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        function deleteItem(id, type) {
+            showConfirm(async () => {
+                try {
+                    const res = await fetch(`http://localhost:5000/api/${type}/${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        showAlert('Deleted', 'Item removed successfully.');
+                        loadData(currentTab);
+                    } else {
+                        throw new Error('Failed');
+                    }
+                } catch (e) {
+                    showAlert('Error', 'Could not delete item.', 'error');
+                }
+            });
+        }
+        
+        function editItem(index) {
+            const item = window.currentData[index];
+            openAddModal(item);
+        }
+
+        function viewDetails(index) {
+            const data = window.currentData[index];
+            const modal = document.getElementById('details-modal');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+            
+            if (currentTab === 'orders') {
+                title.textContent = `Order #${data.order_ref || data.id}`;
+                content.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div><p class="text-[10px] uppercase text-gray-400 font-bold">Customer</p><p class="font-bold">${data.customer_name || data.customer}</p></div>
+                        <div><p class="text-[10px] uppercase text-gray-400 font-bold">Phone</p><p class="font-bold">${data.phone}</p></div>
+                        <div><p class="text-[10px] uppercase text-gray-400 font-bold">Total</p><p class="font-black text-xl text-[#C5A059]">$${Number(data.total_price || data.total).toFixed(2)}</p></div>
+                        <div><p class="text-[10px] uppercase text-gray-400 font-bold">Status</p><span class="bg-yellow-100 text-yellow-800 text-[10px] px-2 py-1 rounded font-bold uppercase">${data.status || 'Pending'}</span></div>
+                    </div>
+                    <h4 class="font-bold border-b pb-2 mb-4">Items Ordered</h4>
+                    <div class="space-y-3">
+                        ${Array.isArray(data.items) ? data.items.map(i => `
+                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                                <div class="flex items-center">
+                                    <img src="${i.image}" class="w-10 h-10 rounded object-cover mr-3 bg-white border border-gray-200">
+                                    <div><p class="font-bold text-xs">${i.name}</p></div>
+                                </div>
+                                <span class="font-bold text-sm bg-white px-3 py-1 rounded border border-gray-200">${i.quantity}m</span>
+                            </div>
+                        `).join('') : '<p>No items data</p>'}
+                    </div>
+                `;
+            } else {
+                title.textContent = `Quote Request`;
+                content.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-[#1A2238] font-bold text-xl uppercase">${data.name.charAt(0)}</div>
+                            <div><h3 class="font-bold text-lg">${data.name}</h3><p class="text-gray-400 text-xs">${new Date(data.created_at || Date.now()).toLocaleString()}</p></div>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-xl"><p class="text-[10px] uppercase text-gray-400 font-bold mb-2">Message</p><p class="text-sm leading-relaxed text-gray-600 italic">"${data.message}"</p></div>
+                    </div>
+                `;
+            }
+            openModal('details-modal');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    </script>
+</body>
+</html>

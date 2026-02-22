@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Gallery | Al Meeran Upholstery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#F8F9FA] text-[#1A2238]">
+    <div id="global-drawer"></div>
+
+    <!-- Header -->
+    <div id="global-header"></div>
+
+    <main class="pt-32">
+        <!-- Page Header -->
+        <section class="bg-[#1A2238] py-20 text-center text-white">
+            <h1 class="text-5xl font-extrabold mb-4">Masterpieces Portfolio</h1>
+            <p class="text-[#C5A059] font-bold tracking-widest uppercase text-sm">Visualizing luxury in every detail.</p>
+        </section>
+
+        <!-- Filterable Gallery Grid -->
+        <section class="py-20 container mx-auto px-6">
+            <div class="flex justify-center flex-wrap gap-4 mb-16">
+                <button data-filter="all" class="filter-btn px-8 py-3 bg-[#1A2238] text-white rounded-full text-[10px] font-bold uppercase tracking-widest transition">All Projects</button>
+                <button data-filter="classic" class="filter-btn px-8 py-3 bg-white text-gray-400 rounded-full text-[10px] font-bold uppercase tracking-widest hover:text-[#1A2238] border border-gray-100 transition shadow-sm">Classic</button>
+                <button data-filter="modern" class="filter-btn px-8 py-3 bg-white text-gray-400 rounded-full text-[10px] font-bold uppercase tracking-widest hover:text-[#1A2238] border border-gray-100 transition shadow-sm">Modern</button>
+                <button data-filter="luxury" class="filter-btn px-8 py-3 bg-white text-gray-400 rounded-full text-[10px] font-bold uppercase tracking-widest hover:text-[#1A2238] border border-gray-100 transition shadow-sm">Luxury</button>
+            </div>
+            <div id="gallery-grid" class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="global-footer"></div>
+
+    <script src="js/pages/gallery.js"></script>
+    <script>lucide.createIcons();</script>
+<script src="js/components/global-loader.js"></script><script src="js/components/cart.js"></script><script src="js/components/assistant.js"></script></body>
+</html>
+
+

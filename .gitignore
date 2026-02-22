@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Editor
+.vscode/
+.idea/
+
+# Node (if any)
+node_modules/
+package-lock.json

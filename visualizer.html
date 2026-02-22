@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Visualizer | Al Meeran Upholstery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components/fabric-visualizer.css">
+</head>
+<body class="bg-[#F8F9FA] text-[#1A2238]">
+    <div id="global-drawer"></div>
+
+    <!-- Header -->
+    <div id="global-header"></div>
+
+    <main class="pt-32">
+        <!-- AI Visualizer Component -->
+        <section class="py-20 container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <span class="text-[#C5A059] font-bold uppercase tracking-widest text-sm mb-4 block">Interactive Tool</span>
+                    <h1 class="text-5xl font-extrabold mb-4 tracking-tight">AI Fabric Visualizer</h1>
+                    <p class="text-gray-500 max-w-2xl mx-auto">Upload a photo of your furniture and experiment with our premium fabric textures in real-time.</p>
+                </div>
+                
+                <div class="visualizer-pane bg-white border border-gray-100 shadow-2xl rounded-3xl overflow-hidden">
+                    <div id="upload-zone" class="bg-gray-50 border-2 border-dashed border-gray-200">
+                        <div id="shimmer-effect" class="shimmer-overlay"></div>
+                        <canvas id="visualizer-canvas" class="rounded-lg shadow-sm"></canvas>
+                        <div id="upload-prompt" class="text-center p-12">
+                            <i data-lucide="upload-cloud" class="w-16 h-16 mx-auto text-[#C5A059] opacity-40 mb-6"></i>
+                            <h3 class="text-2xl font-bold mb-4">Upload Your Furniture</h3>
+                            <p class="text-gray-400 mb-8">Click or drag & drop to begin the transformation.</p>
+                            <label for="sofa-upload" class="cursor-pointer bg-[#1A2238] text-white px-10 py-4 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[#C5A059] transition shadow-lg">Select Photo</label>
+                            <input type="file" id="sofa-upload" class="hidden" accept="image/*">
+                        </div>
+                        <button id="new-project-btn" class="hidden absolute top-4 right-4 bg-white/90 backdrop-blur-md px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A2238] border border-gray-100 shadow-xl hover:bg-red-50 hover:text-red-600 transition">
+                            <i data-lucide="trash-2" class="w-3 h-3 mr-2 inline"></i> New Project
+                        </button>
+                    </div>
+                    <div class="p-12 flex flex-col justify-between">
+                        <div id="visualizer-controls" class="hidden">
+                            <div class="flex justify-between items-center mb-8">
+                                <h3 class="text-xs font-extrabold uppercase tracking-widest text-gray-400">Masking Tools</h3>
+                                <div class="flex gap-2">
+                                    <button id="brush-tool" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#C5A059] text-white transition active-tool" title="Paint Fabric Area">
+                                        <i data-lucide="brush" class="w-4 h-4"></i>
+                                    </button>
+                                    <button id="eraser-tool" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-[#1A2238] hover:bg-red-500 hover:text-white transition" title="Erase Fabric Area">
+                                        <i data-lucide="eraser" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-8">Choose Fabric Texture</h3>
+                            <div id="fabric-grid-selector" class="fabric-grid"></div>
+                        </div>
+                        
+                        <div id="empty-state-msg" class="text-center py-20">
+                            <i data-lucide="info" class="w-10 h-10 mx-auto text-gray-200 mb-4"></i>
+                            <p class="text-gray-400 text-sm italic">Upload a photo to unlock editing tools.</p>
+                        </div>
+
+                        <div id="ai-action-container" class="mt-12 flex gap-4 hidden">
+                            <button id="ai-process-btn" disabled class="flex-grow bg-[#1A2238] text-white py-6 rounded-sm font-bold uppercase tracking-[0.3em] text-[10px] hover:bg-[#C5A059] transition-all disabled:opacity-20 shadow-2xl">Apply AI Texture</button>
+                            <button id="reset-visualizer" class="px-6 bg-gray-100 text-[#1A2238] py-6 rounded-sm font-bold uppercase tracking-widest text-[10px] hover:bg-red-50 hover:text-red-600 transition-all">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="global-footer"></div>
+
+    <script src="js/components/fabric-visualizer.js"></script>
+    <script>lucide.createIcons();</script>
+<script src="js/components/global-loader.js"></script><script src="js/components/cart.js"></script><script src="js/components/assistant.js"></script></body>
+</html>
+
+
