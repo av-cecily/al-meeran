@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchGallery() {
         try {
-            const response = await fetch('http://localhost:5000/api/gallery');
+            const response = await fetch('/api/gallery');
             if (!response.ok) throw new Error('API fetch failed');
             const data = await response.json();
             return data.map(p => ({

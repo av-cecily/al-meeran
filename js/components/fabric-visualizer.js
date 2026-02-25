@@ -9,16 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadZone = document.getElementById('upload-zone');
     const fileInput = document.getElementById('sofa-upload');
     const fabricGrid = document.getElementById('fabric-grid-selector');
-    const aiProcessBtn = document.getElementById('ai-process-btn');
     const resetBtn = document.getElementById('reset-visualizer');
     const newProjectBtn = document.getElementById('new-project-btn');
     const shimmer = document.getElementById('shimmer-effect');
-    
-    // Masking State
-    const brushBtn = document.getElementById('brush-tool');
-    const eraserBtn = document.getElementById('eraser-tool');
-    let isDrawing = false;
-    let currentTool = 'brush'; // 'brush' or 'eraser'
     
     // Mask Canvas (Offscreen)
     const maskCanvas = document.createElement('canvas');
@@ -29,14 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LOCAL FABRIC TEXTURES ---
     const fabricTextures = [
-        { id: 't1', url: 'images/fabric-samples/premium-velvet.jpg' },
-        { id: 't2', url: 'images/fabric-samples/italian-leather.jpg' },
-        { id: 't3', url: 'images/fabric-samples/premium-linen.jpg' },
-        { id: 't4', url: 'images/fabric-samples/modern-tweed.jpg' },
-        { id: 't5', url: 'images/fabric-samples/royal-silk.jpg' },
-        { id: 't6', url: 'images/fabric-samples/cotton-canvas.jpg' },
-        { id: 't7', url: 'images/fabric-samples/persian-camille.jpg' },
-        { id: 't8', url: 'images/fabric-samples/Artisan-jacquard.jpg' }
+        { id: 't1', url: 'assets/images/fabric-samples/premium-velvet.jpg' },
+        { id: 't2', url: 'assets/images/fabric-samples/italian-leather.jpg' },
+        { id: 't3', url: 'assets/images/fabric-samples/premium-linen.jpg' },
+        { id: 't4', url: 'assets/images/fabric-samples/modern-tweed.jpg' },
+        { id: 't5', url: 'assets/images/fabric-samples/royal-silk.jpg' },
+        { id: 't6', url: 'assets/images/fabric-samples/cotton-canvas.jpg' },
+        { id: 't7', url: 'assets/images/fabric-samples/persian-camille.jpg' },
+        { id: 't8', url: 'assets/images/fabric-samples/Artisan-jacquard.jpg' }
     ];
 
     // --- NEW PROJECT LOGIC ---
@@ -50,69 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ai-action-container').classList.add('hidden');
             document.getElementById('empty-state-msg').classList.remove('hidden');
             newProjectBtn.classList.add('hidden');
-            aiProcessBtn.disabled = true;
             document.querySelectorAll('.fabric-circle').forEach(c => c.classList.remove('selected'));
         };
-    }
-
-    // --- TOOL SWITCHING ---
-    if (brushBtn && eraserBtn) {
-        brushBtn.onclick = () => {
-            currentTool = 'brush';
-            brushBtn.classList.add('bg-[#C5A059]', 'text-white');
-            eraserBtn.classList.remove('bg-red-500', 'text-white');
-        };
-        eraserBtn.onclick = () => {
-            currentTool = 'eraser';
-            eraserBtn.classList.add('bg-red-500', 'text-white');
-            brushBtn.classList.remove('bg-[#C5A059]', 'text-white');
-        };
-    }
-
-    // --- MASK DRAWING LOGIC ---
-    function getMousePos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        return {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
-        };
-    }
-
-    canvas.onmousedown = (e) => {
-        if (!originalImage) return;
-        isDrawing = true;
-        draw(e);
-    };
-
-    canvas.onmousemove = (e) => {
-        if (isDrawing) draw(e);
-    };
-
-    window.onmouseup = () => {
-        isDrawing = false;
-        maskCtx.beginPath();
-    };
-
-    function draw(e) {
-        const pos = getMousePos(e);
-        maskCtx.lineWidth = 40;
-        maskCtx.lineCap = 'round';
-        maskCtx.lineJoin = 'round';
-
-        if (currentTool === 'brush') {
-            maskCtx.globalCompositeOperation = 'source-over';
-            maskCtx.strokeStyle = 'white';
-        } else {
-            maskCtx.globalCompositeOperation = 'destination-out';
-        }
-
-        maskCtx.lineTo(pos.x, pos.y);
-        maskCtx.stroke();
-        maskCtx.beginPath();
-        maskCtx.moveTo(pos.x, pos.y);
-        renderFullPreview();
     }
 
     // --- FILE HANDLING ---
@@ -139,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('ai-action-container').classList.remove('hidden');
                 document.getElementById('empty-state-msg').classList.add('hidden');
                 if (newProjectBtn) newProjectBtn.classList.remove('hidden');
-                aiProcessBtn.disabled = false;
             };
             img.src = e.target.result;
         };
@@ -196,14 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initFabricGrid();
-
-    aiProcessBtn.onclick = () => {
-        shimmer.style.display = 'block';
-        setTimeout(() => {
-            renderFullPreview();
-            shimmer.style.display = 'none';
-        }, 1500);
-    };
 
     if (resetBtn) {
         resetBtn.onclick = () => {

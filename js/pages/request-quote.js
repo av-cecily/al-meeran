@@ -13,23 +13,27 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         
         const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
         const submitBtn = event.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending...';
 
+        const apiData = new FormData();
+        apiData.append('name', formData.get('user_name'));
+        apiData.append('phone', formData.get('user_phone'));
+        apiData.append('type', formData.get('furniture_type'));
+        apiData.append('message', formData.get('user_message'));
+        
+        const imageFile = formData.get('furniture_image');
+        if (imageFile && imageFile.name) {
+            apiData.append('image', imageFile);
+        }
+
         try {
-            const response = await fetch('http://localhost:5000/api/quotes', {
+            const response = await fetch('/api/quotes', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: data.user_name,
-                    phone: data.user_phone,
-                    type: data.furniture_type,
-                    message: data.user_message
-                })
+                body: apiData
             });
 
             if (!response.ok) throw new Error('Network response was not ok');

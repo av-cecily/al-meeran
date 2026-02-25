@@ -15,13 +15,13 @@ window.AlMeeranCart = {
     addItem(product, qty) {
         const existingItem = this.items.find(item => item.id === product.id);
         if (existingItem) {
-            existingItem.quantity += qty;
+            existingItem.quantity += 1; // Samples are usually 1 per type
         } else {
-            this.items.push({ ...product, quantity: qty });
+            this.items.push({ ...product, quantity: 1 });
         }
         this.save();
         this.updateCartUI();
-        this.showNotification(`Added ${qty}m of ${product.name} to selection!`);
+        this.showNotification(`Added ${product.name} sample to selection!`);
     },
 
     removeItem(id) {
@@ -35,20 +35,20 @@ window.AlMeeranCart = {
     },
 
     getTotal() {
-        return this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+        return "Free";
     },
 
     getCount() {
-        return this.items.reduce((sum, item) => sum + item.quantity, 0);
+        return this.items.length;
     },
 
     updateCartUI() {
         // Update badge counts in the navbar
         const badges = document.querySelectorAll('.cart-count');
-        const itemsCount = this.items.reduce((sum, item) => sum + item.quantity, 0);
+        const itemsCount = this.items.length;
         
         badges.forEach(badge => {
-            badge.textContent = Math.round(itemsCount);
+            badge.textContent = itemsCount;
             badge.style.display = this.items.length > 0 ? 'flex' : 'none';
         });
 
@@ -58,14 +58,14 @@ window.AlMeeranCart = {
         
         if (drawerList) {
             drawerList.innerHTML = this.items.length === 0 
-                ? '<div class="text-center py-20"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto text-gray-100 mb-4"></i><p class="text-gray-400 text-xs italic">Your selection is empty.</p></div>' 
+                ? '<div class="text-center py-20"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto text-gray-100 mb-4"></i><p class="text-gray-400 text-xs italic">Your sample selection is empty.</p></div>' 
                 : this.items.map(item => `
                     <div class="flex items-center justify-between border-b border-gray-50 py-4">
                         <div class="flex items-center">
                             <img src="${item.image}" class="w-12 h-12 rounded-lg object-cover mr-4 shadow-sm">
                             <div>
                                 <p class="font-bold text-[11px] uppercase tracking-wider text-[#1A2238]">${item.name}</p>
-                                <p class="text-[10px] text-[#C5A059] font-black">${item.quantity}M x BHD ${item.price.toFixed(2)}</p>
+                                <p class="text-[10px] text-[#C5A059] font-black uppercase tracking-widest">Free Sample</p>
                             </div>
                         </div>
                         <button onclick="AlMeeranCart.removeItem('${item.id}')" class="text-gray-300 hover:text-red-500 transition">
@@ -78,7 +78,7 @@ window.AlMeeranCart = {
         }
 
         if (drawerTotal) {
-            drawerTotal.textContent = `BHD ${this.getTotal()}`;
+            drawerTotal.textContent = `Free`;
         }
     },
 

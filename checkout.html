@@ -15,10 +15,18 @@
     <div id="global-header"></div>
     <div id="global-drawer"></div>
 
-    <main class="pt-40 pb-20 container mx-auto px-6">
-        <h1 class="text-4xl font-extrabold mb-12 tracking-tighter uppercase text-center">Secure Checkout</h1>
+    <main class="pt-32">
+        <section class="bg-[#1A2238] py-24 text-center text-white relative overflow-hidden mb-20">
+            <div class="absolute inset-0 opacity-20">
+                <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10">
+                <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">Secure Checkout</h1>
+                <p class="text-[#C5A059] font-bold tracking-[0.4em] uppercase text-xs">Finalize your sample request</p>
+            </div>
+        </section>
         
-        <div class="grid lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+        <div class="grid lg:grid-cols-3 gap-12 max-w-6xl mx-auto px-6">
             <div class="lg:col-span-2 space-y-8">
                 <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
                     <h2 class="text-xl font-bold mb-8 flex items-center">
@@ -112,14 +120,13 @@
 
             itemsContainer.innerHTML = cart.map(item => `
                 <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-300">${item.name} (${item.quantity}M)</span>
-                    <span class="font-bold">BHD ${(item.price * item.quantity).toFixed(2)}</span>
+                    <span class="text-gray-300 font-bold uppercase tracking-widest text-[10px]">${item.name}</span>
+                    <span class="font-bold text-[#C5A059] text-[10px] uppercase">Free Sample</span>
                 </div>
             `).join('');
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
-            totalDisplay.textContent = `BHD ${total}`;
-            subtotalDisplay.textContent = `BHD ${total}`;
+            totalDisplay.textContent = `Free`;
+            subtotalDisplay.textContent = `Free`;
 
             document.getElementById('place-order-btn').onclick = async () => {
                 const form = document.getElementById('checkout-form');
@@ -133,16 +140,13 @@
                     const orderData = {
                         customer: customerName,
                         phone: phone,
-                        address: address, // Backend needs to store this? Added to 'items' JSON or extend schema? 
-                        // For now, I'll put address in customer name or just ignore it in schema but send it.
-                        // Wait, schema has 'items' text. I'll add address to items metadata or just log it.
-                        // Actually, I'll just send it.
+                        address: address, 
                         items: cart,
-                        total: total
+                        total: 0
                     };
 
                     try {
-                        const response = await fetch('http://localhost:5000/api/orders', {
+                        const response = await fetch('/api/orders', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(orderData)
@@ -163,13 +167,13 @@
                             customer: customerName,
                             phone: phone,
                             items: cart,
-                            total: total,
+                            total: 0,
                             date: new Date().toLocaleDateString(),
                             synced: false
                         });
                         localStorage.setItem('al_meeran_orders', JSON.stringify(orders));
                         localStorage.removeItem('al_meeran_cart');
-                        alert('(Offline Mode) Order saved locally!');
+                        alert('(Offline Mode) Request saved locally!');
                         showSuccessModal();
                     }
                 } else {

@@ -13,14 +13,17 @@ CORS(app)  # Allow cross-origin requests
 # Configuration
 UPLOAD_FOLDER_FABRIC = '../assets/images/fabric-samples'
 UPLOAD_FOLDER_GALLERY = '../assets/images/gallery'
+UPLOAD_FOLDER_QUOTES = '../assets/images/quotes'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 app.config['UPLOAD_FOLDER_FABRIC'] = UPLOAD_FOLDER_FABRIC
 app.config['UPLOAD_FOLDER_GALLERY'] = UPLOAD_FOLDER_GALLERY
+app.config['UPLOAD_FOLDER_QUOTES'] = UPLOAD_FOLDER_QUOTES
 
 # Ensure upload directories exist
 os.makedirs(app.config['UPLOAD_FOLDER_FABRIC'], exist_ok=True)
 os.makedirs(app.config['UPLOAD_FOLDER_GALLERY'], exist_ok=True)
+os.makedirs(app.config['UPLOAD_FOLDER_QUOTES'], exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -62,6 +65,8 @@ def add_product():
     category = request.form.get('category', 'Fabric')
 
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
+    
     cursor = conn.cursor()
     cursor.execute("INSERT INTO products (name, price, category, image_url) VALUES (%s, %s, %s, %s)", 
                    (name, price, category, relative_path))
@@ -74,6 +79,7 @@ def add_product():
 @app.route('/api/products/<int:id>', methods=['DELETE'])
 def delete_product(id):
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
     cursor.execute("DELETE FROM products WHERE id = %s", (id,))
     conn.commit()
@@ -84,6 +90,7 @@ def delete_product(id):
 @app.route('/api/products/<int:id>', methods=['PUT'])
 def update_product(id):
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
     
     name = request.form.get('name')
@@ -119,6 +126,7 @@ def get_gallery():
 @app.route('/api/gallery/<int:id>', methods=['DELETE'])
 def delete_gallery_item(id):
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
     cursor.execute("DELETE FROM gallery WHERE id = %s", (id,))
     conn.commit()
@@ -129,6 +137,7 @@ def delete_gallery_item(id):
 @app.route('/api/gallery/<int:id>', methods=['PUT'])
 def update_gallery_item(id):
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
     
     title = request.form.get('title')
@@ -167,6 +176,7 @@ def add_gallery_item():
     category = request.form['category']
 
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
     cursor.execute("INSERT INTO gallery (title, category, image_url) VALUES (%s, %s, %s)", 
                    (title, category, relative_path))
@@ -207,6 +217,7 @@ def create_order():
     order_ref = f"ORD-{os.urandom(4).hex().upper()}"
 
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
     cursor.execute("INSERT INTO orders (order_ref, customer_name, phone, items, total_price) VALUES (%s, %s, %s, %s, %s)",
                    (order_ref, customer, phone, items, total))
@@ -230,16 +241,24 @@ def get_quotes():
 
 @app.route('/api/quotes', methods=['POST'])
 def create_quote():
-    data = request.json
-    name = data.get('name')
-    phone = data.get('phone')
-    service_type = data.get('type')
-    message = data.get('message')
+    name = request.form.get('name')
+    phone = request.form.get('phone')
+    service_type = request.form.get('type')
+    message = request.form.get('message')
+    
+    image_url = None
+    if 'image' in request.files:
+        file = request.files['image']
+        if file.filename != '' and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER_QUOTES'], filename))
+            image_url = f"assets/images/quotes/{filename}"
 
     conn = get_db_connection()
+    if not conn: return jsonify({'error': 'Database connection failed'}), 500
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO quotes (name, phone, service_type, message) VALUES (%s, %s, %s, %s)",
-                   (name, phone, service_type, message))
+    cursor.execute("INSERT INTO quotes (name, phone, service_type, message, image_url) VALUES (%s, %s, %s, %s, %s)",
+                   (name, phone, service_type, message, image_url))
     conn.commit()
     cursor.close()
     conn.close()
@@ -253,6 +272,9 @@ def login():
     password = data.get('password')
 
     conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed. Please ensure MySQL is running.'}), 500
+        
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM admins WHERE username = %s AND password = %s", (username, password))
     user = cursor.fetchone()
