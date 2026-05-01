@@ -1,0 +1,33 @@
+<header id="main-navbar" class="fixed w-full z-50 nav-transition bg-transparent text-white border-b border-white/5">
+    <nav class="container mx-auto px-6 py-6 flex justify-between items-center transition-all duration-300" id="nav-container">
+        <a href="index.html" class="flex flex-col leading-tight">
+            <span class="text-xl font-extrabold tracking-tighter uppercase">AL MEERAN</span>
+            <span class="text-[9px] font-bold tracking-[0.4em] text-[#C5A059] -mt-1 uppercase">UPHOLSTERY</span>
+        </a>
+        <div class="hidden lg:flex space-x-10 items-center font-bold uppercase text-[10px] tracking-[0.2em]">
+            <a href="index.html" class="hover:text-[#C5A059] transition">Home</a>
+            <a href="about.html" class="hover:text-[#C5A059] transition">About</a>
+            <a href="services.html" class="hover:text-[#C5A059] transition">Services</a>
+            <a href="shop.html" class="hover:text-[#C5A059] transition">Fabric Shop</a>
+            <a href="gallery.html" class="hover:text-[#C5A059] transition">Gallery</a>
+            <a href="visualizer.html" class="hover:text-[#C5A059] transition">Visualizer</a>
+            <a href="quote.html" class="bg-[#C5A059] px-6 py-3 text-white rounded-sm hover:bg-[#b08e4d] transition shadow-lg shadow-[#C5A059]/20">Get a Quote</a>
+            <button id="cart-toggle-btn" class="relative hover:text-[#C5A059] transition ml-4">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                <span class="cart-count absolute -top-2 -right-2 bg-[#C5A059] text-[#1A2238] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-[#1A2238] hidden">0</span>
+            </button>
+        </div>
+        <button id="mobile-menu-btn" class="lg:hidden focus:outline-none"><i data-lucide="menu" class="w-6 h-6"></i></button>
+    </nav>
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-[#1A2238] border-t border-white/5 py-8 shadow-2xl lg:hidden text-center">
+        <div class="container mx-auto px-6 flex flex-col space-y-6 text-xs font-bold uppercase tracking-widest text-white">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="shop.html">Shop</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="visualizer.html">Visualizer</a>
+            <a href="quote.html" class="text-[#C5A059]">Request Quote</a>
+        </div>
+    </div>
+</header>

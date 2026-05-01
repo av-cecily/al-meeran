@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Visualizer | Al Meeran Upholstery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/components/fabric-visualizer.css">
+</head>
+<body class="bg-[#F8F9FA] text-[#1A2238]">
+    <div id="global-drawer"></div>
+
+    <!-- Header -->
+    <div id="global-header"></div>
+
+    <main class="pt-32">
+        <!-- AI Visualizer Component -->
+        <section class="bg-[#1A2238] py-24 text-center text-white relative overflow-hidden mb-20">
+            <div class="absolute inset-0 opacity-20">
+                <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10">
+                <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">AI Fabric Visualizer</h1>
+                <p class="text-[#C5A059] font-bold tracking-[0.4em] uppercase text-xs">Experiment with premium fabric textures in real-time.</p>
+            </div>
+        </section>
+
+        <section class="container mx-auto px-6 mb-20">
+            <div class="max-w-6xl mx-auto">
+                
+                <div class="visualizer-pane bg-white border border-gray-100 shadow-2xl rounded-3xl overflow-hidden">
+                    <div id="upload-zone" class="bg-gray-50 border-2 border-dashed border-gray-200">
+                        <div id="shimmer-effect" class="shimmer-overlay"></div>
+                        <canvas id="visualizer-canvas" class="rounded-lg shadow-sm"></canvas>
+                        <div id="upload-prompt" class="text-center p-12">
+                            <i data-lucide="upload-cloud" class="w-16 h-16 mx-auto text-[#C5A059] opacity-40 mb-6"></i>
+                            <h3 class="text-2xl font-bold mb-4">Upload Your Furniture</h3>
+                            <p class="text-gray-400 mb-8">Click or drag & drop to begin the transformation.</p>
+                            <label for="sofa-upload" class="cursor-pointer bg-[#1A2238] text-white px-10 py-4 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[#C5A059] transition shadow-lg">Select Photo</label>
+                            <input type="file" id="sofa-upload" class="hidden" accept="image/*">
+                        </div>
+                        <button id="new-project-btn" class="hidden absolute top-4 right-4 bg-white/90 backdrop-blur-md px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A2238] border border-gray-100 shadow-xl hover:bg-red-50 hover:text-red-600 transition">
+                            <i data-lucide="trash-2" class="w-3 h-3 mr-2 inline"></i> New Project
+                        </button>
+                    </div>
+                    <div class="p-12 flex flex-col justify-between">
+                        <div id="visualizer-controls" class="hidden">
+                            <div class="flex items-center justify-between mb-8">
+                                <h3 class="text-xs font-extrabold uppercase tracking-widest text-gray-400">Choose Fabric Texture</h3>
+                                <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-lg">
+                                    <button id="tool-fabric" class="p-2 rounded-md bg-[#1A2238] text-white transition-all"><i data-lucide="palette" class="w-4 h-4"></i></button>
+                                    <button id="tool-mask" class="p-2 rounded-md text-gray-400 hover:bg-gray-200 transition-all"><i data-lucide="brush" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div id="fabric-selection-view">
+                                <div id="fabric-grid-selector" class="fabric-grid"></div>
+                            </div>
+
+                            <div id="mask-selection-view" class="hidden animate-in fade-in slide-in-from-bottom-2">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Manual Masking (Paint over sofa)</p>
+                                <div class="flex items-center gap-4 mb-6">
+                                    <input type="range" id="brush-size" min="10" max="100" value="40" class="flex-grow accent-[#C5A059]">
+                                    <button id="clear-mask" class="text-[9px] font-bold uppercase tracking-widest text-red-500 hover:underline">Clear Mask</button>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
+                                    <p class="text-[10px] text-yellow-800 leading-relaxed font-bold uppercase">Pro Tip: Use the brush to paint exactly where the fabric should go on your sofa.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="empty-state-msg" class="text-center py-20">
+                            <i data-lucide="info" class="w-10 h-10 mx-auto text-gray-200 mb-4"></i>
+                            <p class="text-gray-400 text-sm italic">Upload a photo to unlock editing tools.</p>
+                        </div>
+
+                        <div id="ai-action-container" class="mt-12 flex gap-4 hidden">
+                            <button id="reset-visualizer" class="w-full bg-gray-100 text-[#1A2238] py-6 rounded-sm font-bold uppercase tracking-widest text-[10px] hover:bg-red-50 hover:text-red-600 transition-all">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2 inline"></i> Reset Visualizer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="global-footer"></div>
+
+    <script src="static/js/components/fabric-visualizer.js"></script>
+    <script>lucide.createIcons();</script>
+<script src="static/js/components/global-loader.js"></script><script src="static/js/components/cart.js"></script><script src="static/js/components/assistant.js"></script></body>
+</html>
+
+
