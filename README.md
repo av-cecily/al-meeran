@@ -225,6 +225,17 @@ netstat -ano | findstr :5000
 taskkill /PID <PID_NUMBER> /F
 ```
 
+### ❌ "No onnxruntime backend found" error
+```
+Yeh rembg aur onnxruntime version conflict ki wajah se hota hai.
+Fix: Compatible versions install karo:
+
+pip install "rembg[cpu]==2.0.57" onnxruntime==1.18.0
+
+Note: Yeh error sirf AI Visualizer feature ko affect karta hai.
+Baki sab features normally kaam karte hain.
+```
+
 ---
 
 ## 🗄️ Database Tables
