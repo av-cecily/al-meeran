@@ -7,6 +7,7 @@ class DBConnection:
 
     @classmethod
     def get_pool(cls):
+        # Always retry if pool is None (handles MySQL restart gracefully)
         if cls._pool is None:
             try:
                 cls._pool = mysql.connector.pooling.MySQLConnectionPool(
@@ -18,8 +19,10 @@ class DBConnection:
                     database=Config.DB_NAME,
                     auth_plugin='mysql_native_password'
                 )
+                print("✅ DB connection pool created successfully.")
             except Error as e:
-                print(f"Error creating connection pool: {e}")
+                print(f"❌ Error creating connection pool: {e}")
+                cls._pool = None  # Ensure it stays None so next call retries
                 return None
         return cls._pool
 
@@ -27,5 +30,10 @@ class DBConnection:
     def get_connection(cls):
         pool = cls.get_pool()
         if pool:
-            return pool.get_connection()
+            try:
+                return pool.get_connection()
+            except Error as e:
+                print(f"❌ Error getting connection from pool: {e}")
+                cls._pool = None  # Reset pool so next call rebuilds it
+                return None
         return None

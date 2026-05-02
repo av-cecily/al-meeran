@@ -21,7 +21,8 @@ class GalleryController:
         if not filename:
             return jsonify({'error': 'Invalid file type'}), 400
             
-        path = f"static/assets/images/gallery/{filename}"
+        # Correct path: matches GALLERY_UPLOAD_PATH = static/assets/images/
+        path = f"assets/images/{filename}"
         title = request.form.get('title')
         category = request.form.get('category', 'Classic')
         

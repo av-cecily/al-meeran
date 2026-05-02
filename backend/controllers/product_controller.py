@@ -21,7 +21,8 @@ class ProductController:
         if not filename:
             return jsonify({'error': 'Invalid file type'}), 400
             
-        path = f"static/assets/images/fabric-samples/{filename}"
+        # Correct path: matches FABRIC_UPLOAD_PATH = static/assets/fabrics/
+        path = f"assets/fabrics/{filename}"
         name = request.form.get('name')
         price = request.form.get('price', 0)
         category = request.form.get('category', 'Classic')

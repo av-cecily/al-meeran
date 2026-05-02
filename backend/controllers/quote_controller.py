@@ -17,7 +17,8 @@ class QuoteController:
             file = request.files['image']
             filename = UploadService.save_file(file, Config.QUOTES_UPLOAD_PATH)
             if filename:
-                img_url = f"/static/assets/images/quotes/{filename}"
+                # Correct path: matches QUOTES_UPLOAD_PATH = static/assets/quotes/
+                img_url = f"/static/assets/quotes/{filename}"
         
         name = request.form.get('name')
         phone = request.form.get('phone')
